@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.triptogether.attraction.data.response.AttractionResponse;
 import com.ssafy.triptogether.attraction.domain.Attraction;
 import com.ssafy.triptogether.attraction.domain.Region;
 import com.ssafy.triptogether.attraction.repository.AttractionRepository;
@@ -20,6 +21,7 @@ import com.ssafy.triptogether.member.repository.MemberRepository;
 import com.ssafy.triptogether.member.utils.MemberUtils;
 import com.ssafy.triptogether.plan.data.request.PlanDetail;
 import com.ssafy.triptogether.plan.data.request.PlansSaveRequest;
+import com.ssafy.triptogether.plan.data.request.SearchCondition;
 import com.ssafy.triptogether.plan.domain.Plan;
 import com.ssafy.triptogether.plan.domain.PlanAttraction;
 import com.ssafy.triptogether.plan.repository.PlanAttractionRepository;
@@ -30,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class PlanServiceImpl implements PlanSaveService {
+public class PlanServiceImpl implements PlanSaveService, PlanLoadService {
 	// Repository
 	private final PlanRepository planRepository;
 	private final PlanAttractionRepository planAttractionRepository;
@@ -117,5 +119,15 @@ public class PlanServiceImpl implements PlanSaveService {
 					planAttractionRepository.save(planAttraction);
 				});
 			});
+	}
+
+	@Override
+	public List<AttractionResponse> search(SearchCondition searchCondition) {
+		// 현재 화면 크기를 준다 -> 화면 이동
+		List<AttractionResponse> attractionList;
+		if (searchCondition.longitude_delta() == null) {
+			attractionList = attractionRepository.search(searchCondition);
+		}
+		return null;
 	}
 }
