@@ -35,8 +35,6 @@ public class QPlan extends EntityPathBase<Plan> {
 
     public final com.ssafy.triptogether.member.domain.QMember member;
 
-    public final ListPath<PlanAttraction, QPlanAttraction> planAttractions = this.<PlanAttraction, QPlanAttraction>createList("planAttractions", PlanAttraction.class, QPlanAttraction.class, PathInits.DIRECT2);
-
     public final NumberPath<Double> realBudget = createNumber("realBudget", Double.class);
 
     public final com.ssafy.triptogether.attraction.domain.QRegion region;

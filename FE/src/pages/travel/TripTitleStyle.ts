@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import {bg_lightgray, bg_light, font_light} from '../../constants/colors';
+import {bg_light, bg_lightgray} from '../../constants/colors';
 
 const Wrapper = styled.View`
   flex: 1;
@@ -10,14 +10,31 @@ const Wrapper = styled.View`
   align-items: center;
 `;
 
+const TitleContainer = styled.View`
+  height: 50px;
+  width: 90%;
+  margin-top: 250px;
+  justify-content: center;
+  align-items: center;
+`;
+
 const TitleInput = styled.TextInput`
-  background-color: ${bg_lightgray};
   width: 80%;
   padding: 1px 15px;
   height: 40px;
-  margin-top: 200px;
-  border-radius: 20px;
-  color: ${font_light};
+  border-bottom-width: 1px;
+  border-bottom-color: ${bg_lightgray};
 `;
 
-export {Wrapper, TitleInput};
+const TitleLength = styled.View`
+  width: 80%;
+  flex-direction: row;
+  justify-content: flex-end;
+`;
+
+const TitleLengthText = styled.Text`
+  font-size: 12px;
+  margin-right: 8px;
+`;
+
+export {Wrapper, TitleContainer, TitleInput, TitleLength, TitleLengthText};

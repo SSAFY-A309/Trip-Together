@@ -7,8 +7,9 @@ import com.ssafy.triptogether.global.exception.response.ErrorCode;
  * 타임아웃
  */
 public class TimeOutException extends TripRuntimeException {
-	protected static final String MESSAGE_KEY = "error.TimeOut";
-	public TimeOutException(String detailMessageKey, ErrorCode errorCode, Object... params) {
-		super(MESSAGE_KEY + "." + detailMessageKey, errorCode, params);
-	}
+    protected static final String MESSAGE_KEY = "error.TimeOut";
+
+    public TimeOutException(String detailMessageKey, ErrorCode errorCode, Object... params) {
+        super(MESSAGE_KEY + "." + detailMessageKey, errorCode, params);
+    }
 }

@@ -38,6 +38,13 @@ import com.ssafy.triptogether.tripaccount.repository.CurrencyRepository;
 import com.ssafy.triptogether.tripaccount.repository.TripAccountRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -52,42 +59,44 @@ public class TripAccountServiceImpl implements TripAccountLoadService, TripAccou
 	private final CurrencyRateClient currencyRateClient;
 	private final TwinkleBankClient twinkleBankClient;
 
-	/**
-	 * 환전 가능 통화 목록을 조회하는 메서드
-	 * @return 환전 가능 통화 목록
-	 */
-	@Override
-	public CurrenciesLoadResponse currenciesLoad() {
-		List<Currency> currencies = currencyRepository.findAll();
-		List<CurrenciesLoadDetail> collectCurrencies = currencies.stream()
-			.map(
-				currency -> CurrenciesLoadDetail.builder()
-					.code(currency.getCode())
-					.nation(currency.getCurrencyNation())
-					.nationKr(currency.getCurrencyNation().getMessage())
-					.unit(currency.getCode().getUnit())
-					.build()
-			).toList();
-		return CurrenciesLoadResponse.builder()
-			.currenciesLoadDetail(collectCurrencies)
-			.build();
-	}
+    /**
+     * 환전 가능 통화 목록을 조회하는 메서드
+     *
+     * @return 환전 가능 통화 목록
+     */
+    @Override
+    public CurrenciesLoadResponse currenciesLoad() {
+        List<Currency> currencies = currencyRepository.findAll();
+        List<CurrenciesLoadDetail> collectCurrencies = currencies.stream()
+                .map(
+                        currency -> CurrenciesLoadDetail.builder()
+                                .code(currency.getCode())
+                                .nation(currency.getCurrencyNation())
+                                .nationKr(currency.getCurrencyNation().getMessage())
+                                .unit(currency.getCode().getUnit())
+                                .build()
+                ).toList();
+        return CurrenciesLoadResponse.builder()
+                .currenciesLoadDetail(collectCurrencies)
+                .build();
+    }
 
-	/**
-	 * 해당 통화 코드의 환율 정보 반환
-	 * @param currencyCode 요청 통화 코드
-	 * @return 환율 정보
-	 */
-	@Override
-	public RateLoadResponse rateLoad(CurrencyCode currencyCode) {
-		Currency currency = currencyRepository.findByCode(currencyCode)
-			.orElseThrow(
-				() -> new NotFoundException("RateLoad", ErrorCode.CURRENCY_NOT_FOUND, currencyCode)
-			);
-		return RateLoadResponse.builder()
-			.rate(currency.getRate())
-			.build();
-	}
+    /**
+     * 해당 통화 코드의 환율 정보 반환
+     *
+     * @param currencyCode 요청 통화 코드
+     * @return 환율 정보
+     */
+    @Override
+    public RateLoadResponse rateLoad(CurrencyCode currencyCode) {
+        Currency currency = currencyRepository.findByCode(currencyCode)
+                .orElseThrow(
+                        () -> new NotFoundException("RateLoad", ErrorCode.CURRENCY_NOT_FOUND, currencyCode)
+                );
+        return RateLoadResponse.builder()
+                .rate(currency.getRate())
+                .build();
+    }
 
 	/**
 	 * 회원의 지갑 내 목록 조회

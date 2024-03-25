@@ -3,6 +3,10 @@ spring:
     redis:
       host: localhost
       port: ${TEST_TRIP_REDIS_BINDING_PORT}
+    mongodb:
+      uri: mongodb://${TEST_TRIP_MONGODB_USERNAME}:${TEST_TRIP_MONGODB_PASSWORD}@localhost:${TEST_TRIP_MONGODB_BINDING_PORT}/?authSource=admin
+      database: ${TEST_TRIP_MONGODB_DATABASE}
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:${TEST_TRIP_MYSQL_BINDING_PORT}/${TEST_TRIP_MYSQL_DATABASE}

@@ -33,7 +33,7 @@ export default SearchPlace;
 const styles = StyleSheet.create({
   search: {
     // container 감싸고 있는 컴포넌트
-    container: {width: 400, marginTop: 20},
+    container: {width: 370, marginTop: 20},
     // input을 감싸는 컴포넌트
     textInputContainer: {
       flexDirection: 'row',

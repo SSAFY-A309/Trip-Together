@@ -1,29 +1,17 @@
 package com.ssafy.twinklebank.account.domain;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.twinklebank.global.domain.BaseEntity;
 import com.ssafy.twinklebank.member.domain.Member;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -71,5 +59,13 @@ public class Account extends BaseEntity {
 	public void setMember(Member member) {
 		this.member = member;
 		member.getAccounts().add(this);
+	}
+
+	public void increase(double price) {
+		this.balance += price;
+	}
+
+	public void decrease(double price) {
+		this.balance -= price;
 	}
 }

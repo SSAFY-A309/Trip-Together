@@ -55,8 +55,6 @@ public class QAttraction extends EntityPathBase<Attraction> {
 
     public final StringPath name = createString("name");
 
-    public final ListPath<com.ssafy.triptogether.plan.domain.PlanAttraction, com.ssafy.triptogether.plan.domain.QPlanAttraction> planAttractions = this.<com.ssafy.triptogether.plan.domain.PlanAttraction, com.ssafy.triptogether.plan.domain.QPlanAttraction>createList("planAttractions", com.ssafy.triptogether.plan.domain.PlanAttraction.class, com.ssafy.triptogether.plan.domain.QPlanAttraction.class, PathInits.DIRECT2);
-
     public final QRegion region;
 
     public final ListPath<com.ssafy.triptogether.review.domain.Review, com.ssafy.triptogether.review.domain.QReview> reviews = this.<com.ssafy.triptogether.review.domain.Review, com.ssafy.triptogether.review.domain.QReview>createList("reviews", com.ssafy.triptogether.review.domain.Review.class, com.ssafy.triptogether.review.domain.QReview.class, PathInits.DIRECT2);

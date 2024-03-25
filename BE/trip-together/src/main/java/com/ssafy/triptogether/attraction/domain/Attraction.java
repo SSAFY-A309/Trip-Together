@@ -3,7 +3,6 @@ package com.ssafy.triptogether.attraction.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.triptogether.flashmob.domain.FlashMob;
 import com.ssafy.triptogether.global.domain.BaseEntity;
-import com.ssafy.triptogether.plan.domain.PlanAttraction;
 import com.ssafy.triptogether.review.domain.Review;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -88,10 +87,6 @@ public class Attraction extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "attraction", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "attraction", cascade = CascadeType.ALL)
-    private List<PlanAttraction> planAttractions = new ArrayList<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "attraction", cascade = CascadeType.ALL)

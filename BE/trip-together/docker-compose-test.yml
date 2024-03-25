@@ -20,3 +20,16 @@ services:
     ports:
       - ${TEST_TRIP_REDIS_BINDING_PORT}:6379
     restart: unless-stopped
+
+  test_trip_dev_mongodb_container:
+    container_name: test_trip_mongodb_container
+    image: mongo
+    ports:
+      - ${TEST_TRIP_MONGODB_BINDING_PORT}:27017
+    volumes:
+      - ${TEST_TRIP_MONGODB_DATA_PATH}:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ${TEST_TRIP_MONGODB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${TEST_TRIP_MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${TEST_TRIP_MONGODB_PASSWORD}
+    restart: unless-stopped

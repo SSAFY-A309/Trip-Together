@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class TripTogetherApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TripTogetherApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(TripTogetherApplication.class, args);
+    }
 
 }

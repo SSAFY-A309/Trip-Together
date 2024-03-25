@@ -1,14 +1,13 @@
 package com.ssafy.triptogether.syncaccount.data.response;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 public record BankAccountsLoadResponse(
-	@JsonProperty("accounts")
-	List<BankAccountsDetail> bankAccountsDetails
+        @JsonProperty("accounts")
+        List<BankAccountsDetail> bankAccountsDetails
 ) {
 }
