@@ -56,29 +56,29 @@ class TripAccountServiceImplTest {
 	@Mock
 	AccountHistoryRepository accountHistoryRepository;
 
-	@Nested
-	@MockitoSettings(strictness = Strictness.LENIENT)
-	@DisplayName("환전 가능 통화 목록 조회")
-	class CurrenciesLoadTest {
-		List<Currency> testCurrencies;
+    @Nested
+    @MockitoSettings(strictness = Strictness.LENIENT)
+    @DisplayName("환전 가능 통화 목록 조회")
+    class CurrenciesLoadTest {
+        List<Currency> testCurrencies;
 
-		@BeforeEach
-		void setUp() {
-			Currency currency1 = Currency.builder()
-				.code(CurrencyCode.EUR)
-				.currencyNation(CurrencyNation.EUR)
-				.rate(365.1)
-				.build();
-			Currency currency2 = Currency.builder()
-				.code(CurrencyCode.GBP)
-				.currencyNation(CurrencyNation.UK)
-				.rate(255.5)
-				.build();
+        @BeforeEach
+        void setUp() {
+            Currency currency1 = Currency.builder()
+                    .code(CurrencyCode.EUR)
+                    .currencyNation(CurrencyNation.EUR)
+                    .rate(365.1)
+                    .build();
+            Currency currency2 = Currency.builder()
+                    .code(CurrencyCode.GBP)
+                    .currencyNation(CurrencyNation.UK)
+                    .rate(255.5)
+                    .build();
 
-			testCurrencies = Arrays.asList(currency1, currency2);
-			// given
-			given(currencyRepository.findAll()).willReturn(testCurrencies);
-		}
+            testCurrencies = Arrays.asList(currency1, currency2);
+            // given
+            given(currencyRepository.findAll()).willReturn(testCurrencies);
+        }
 
 		@Test
 		@DisplayName("전체 통화 목록 조회 성공")
@@ -96,16 +96,16 @@ class TripAccountServiceImplTest {
 			);
 		}
 
-		@Test
-		@DisplayName("통화 환율 조회 실패")
-		void currencyRateLoadFail() {
-			// given
-			given(currencyRepository.findByCode(CurrencyCode.fromString("USD"))).willReturn(Optional.empty());
-			// when & then
-			assertThrows(NotFoundException.class, () -> {
-				tripAccountService.rateLoad(CurrencyCode.fromString("USD"));
-			});
-		}
+        @Test
+        @DisplayName("통화 환율 조회 실패")
+        void currencyRateLoadFail() {
+            // given
+            given(currencyRepository.findByCode(CurrencyCode.fromString("USD"))).willReturn(Optional.empty());
+            // when & then
+            assertThrows(NotFoundException.class, () -> {
+                tripAccountService.rateLoad(CurrencyCode.fromString("USD"));
+            });
+        }
 
 		@Test
 		@DisplayName("통화 환율 조회 성공")

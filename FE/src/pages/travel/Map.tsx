@@ -1,31 +1,30 @@
-// Import React
 import React from 'react';
-// Import required components
-import {SafeAreaView, StyleSheet, View} from 'react-native';
-// Import Map and Marker
+import {SafeAreaView} from 'react-native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import GoogleMap from '../../components/travel/GoogleMap';
 import SearchPlace from '../../components/travel/SearchPlace';
+import {MapStackParams} from '../../interfaces/router/MapStackParams';
+import {Container, PlanImage, PlanIcon} from './MapStyle';
+import PlaceInfo from '../../components/travel/PlaceInfo';
 
 const Map = () => {
+  const navigation = useNavigation<NavigationProp<MapStackParams>>();
+
+  const handlePlanPress = () => {
+    navigation.navigate('plandetail');
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View style={styles.container}>
+      <Container>
         <GoogleMap />
         <SearchPlace />
-      </View>
+        <PlanIcon onPress={handlePlanPress}>
+          <PlanImage source={require('../../assets/images/planning.png')} />
+        </PlanIcon>
+        <PlaceInfo />
+      </Container>
     </SafeAreaView>
   );
 };
 export default Map;
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-});

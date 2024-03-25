@@ -6,9 +6,9 @@ import com.ssafy.triptogether.syncaccount.data.request.SyncAccountDeleteRequest;
 import com.ssafy.triptogether.syncaccount.data.request.SyncAccountSaveRequest;
 
 public interface SyncAccountSaveService {
-	void mainSyncAccountUpdate(Long memberId, MainSyncAccountUpdateRequest mainSyncAccountUpdateRequest);
+    void mainSyncAccountUpdate(Long memberId, MainSyncAccountUpdateRequest mainSyncAccountUpdateRequest);
 
-	void syncAccountSave(Long memberId, PinVerifyRequest pinVerifyRequest, SyncAccountSaveRequest syncAccountSaveRequest);
+    void syncAccountSave(Long memberId, PinVerifyRequest pinVerifyRequest, SyncAccountSaveRequest syncAccountSaveRequest);
 
-	void syncAccountDelete(Long memberId, PinVerifyRequest pinVerifyRequest, SyncAccountDeleteRequest syncAccountDeleteRequest);
+    void syncAccountDelete(Long memberId, PinVerifyRequest pinVerifyRequest, SyncAccountDeleteRequest syncAccountDeleteRequest);
 }

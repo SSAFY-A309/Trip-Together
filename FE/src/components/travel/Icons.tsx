@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {FlatList} from 'react-native';
-import styled from 'styled-components/native';
-import Page from '../../assets/data/MainIcons.tsx';
-import {primary, bg_lightgray} from '../../constants/colors.ts';
+import Page from './MainIcons.tsx';
+import {Container, Indicator, IndicatorWrapper} from './IconsStyle.tsx';
 
 interface ICarousel {
   gap: number;
@@ -10,28 +9,6 @@ interface ICarousel {
   pages: any[];
   pageWidth: number;
 }
-
-const Container = styled.View`
-  height: 20%;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  margin: 10px 10px;
-  padding: 10px 0px;
-`;
-
-const Indicator = styled.View<{focused: boolean}>`
-  margin: 0px 4px;
-  background-color: ${props => (props.focused ? primary : bg_lightgray)};
-  width: 6px;
-  height: 6px;
-`;
-
-const IndicatorWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-top: 16px;
-`;
 
 const Icons = ({pages, pageWidth, gap, offset}: ICarousel) => {
   const [page, setPage] = useState(0);

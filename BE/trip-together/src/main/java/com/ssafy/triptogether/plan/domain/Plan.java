@@ -1,6 +1,5 @@
 package com.ssafy.triptogether.plan.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.triptogether.attraction.domain.Region;
 import com.ssafy.triptogether.global.domain.BaseEntity;
 import com.ssafy.triptogether.global.exception.exceptions.category.BadRequestException;
@@ -15,8 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -39,11 +36,9 @@ public class Plan extends BaseEntity {
     @Column(name = "real_budget")
     private Double realBudget;
 
-    @NotBlank
     @Column(name = "start_at")
     private LocalDate startAt;
 
-    @NotBlank
     @Column(name = "end_at")
     private LocalDate endAt;
 
@@ -55,17 +50,6 @@ public class Plan extends BaseEntity {
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
-    private List<PlanAttraction> planAttractions = new ArrayList<>();
-
-    @PrePersist @PreUpdate
-    private void validateStartAndEndDates() {
-        if (endAt.isBefore(startAt)) {
-            throw new BadRequestException("PlanStartAndEndDates", ErrorCode.PLAN_DATE_BAD_REQUEST);
-        }
-    }
-
     @Builder
     public Plan(String title, Double estimatedBudget, LocalDate startAt, LocalDate endAt, Member member, Region region) {
         this.title = title;
@@ -74,6 +58,14 @@ public class Plan extends BaseEntity {
         this.endAt = endAt;
         setMember(member);
         setRegion(region);
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void validateStartAndEndDates() {
+        if (endAt.isBefore(startAt)) {
+            throw new BadRequestException("PlanStartAndEndDates", ErrorCode.PLAN_DATE_BAD_REQUEST);
+        }
     }
 
     public void setRegion(Region region) {

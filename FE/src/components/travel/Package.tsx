@@ -1,6 +1,6 @@
 import React from 'react';
 import {FlatList} from 'react-native';
-import Page from '../../assets/data/Page';
+import Page from './Page';
 import {Container, PackageTitle} from './PackageStyle';
 
 interface ICarousel {

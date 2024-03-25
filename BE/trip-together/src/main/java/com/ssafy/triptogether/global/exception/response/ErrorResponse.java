@@ -1,9 +1,8 @@
 package com.ssafy.triptogether.global.exception.response;
 
-import org.springframework.http.HttpStatus;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 /**
  * int httpStatus - httpStatus를 숫자로 반환
@@ -11,23 +10,23 @@ import lombok.Data;
  */
 @Data
 public class ErrorResponse {
-	@NotNull
-	private final int status;
+    @NotNull
+    private final int status;
 
-	@NotNull
-	private final String message;
+    @NotNull
+    private final String message;
 
-	/**
-	 * @param errorCode - 커스텀 에러 코드
-	 */
-	public ErrorResponse(ErrorCode errorCode) {
-		this.status = errorCode.getStatus();
-		this.message = errorCode.getMessage();
-	}
+    /**
+     * @param errorCode - 커스텀 에러 코드
+     */
+    public ErrorResponse(ErrorCode errorCode) {
+        this.status = errorCode.getStatus();
+        this.message = errorCode.getMessage();
+    }
 
-	public ErrorResponse(HttpStatus code, String errorMessage) {
-		this.status = code.value();
-		this.message = errorMessage;
-	}
+    public ErrorResponse(HttpStatus code, String errorMessage) {
+        this.status = code.value();
+        this.message = errorMessage;
+    }
 
 }

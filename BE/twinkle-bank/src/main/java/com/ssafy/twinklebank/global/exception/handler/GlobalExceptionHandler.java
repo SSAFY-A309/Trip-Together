@@ -68,4 +68,11 @@ public class GlobalExceptionHandler {
 		log.error(exception.getMessageKey(), exception, exception.getParams());
 		return new ErrorResponse(exception.getErrorCode());
 	} // 418
+
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(IllegalMonitorStateException.class)
+	public ErrorResponse illegalMonitorStateHandler(IllegalMonitorStateException exception) {
+		log.error(exception.getMessage(), exception);
+		return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+	} // 500
 }
