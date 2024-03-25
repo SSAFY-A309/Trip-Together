@@ -22,6 +22,7 @@ import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleBankAccountE
 import com.ssafy.triptogether.member.domain.Member;
 import com.ssafy.triptogether.member.repository.MemberRepository;
 import com.ssafy.triptogether.member.utils.MemberUtils;
+import com.ssafy.triptogether.tripaccount.concurrency.DistributedLock;
 import com.ssafy.triptogether.tripaccount.data.request.TripAccountExchangeRequest;
 import com.ssafy.triptogether.tripaccount.data.response.AccountHistoriesLoadDetail;
 import com.ssafy.triptogether.tripaccount.data.response.CurrenciesLoadDetail;
@@ -163,6 +164,7 @@ public class TripAccountServiceImpl implements TripAccountLoadService, TripAccou
 	 * @param tripAccountExchangeRequest 환전 정보
 	 */
 	@PinVerify
+	@DistributedLock(key = "'exchange:' + #memberId + ':' + #tripAccountExchangeRequest.fromCurrencyCode()")
 	@Transactional
 	@Override
 	public void tripAccountExchange(long memberId, PinVerifyRequest pinVerifyRequest,
