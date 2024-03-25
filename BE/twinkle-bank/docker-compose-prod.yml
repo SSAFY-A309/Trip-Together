@@ -37,3 +37,16 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       SPRING_PROFILES_ACTIVE: prod
     restart: always
+
+  prod_bank_dev_mongodb_container:
+    container_name: prod_bank_mongodb_container
+    image: mongo
+    ports:
+      - ${PROD_BANK_MONGODB_BINDING_PORT}:27017
+    volumes:
+      - ${PROD_BANK_MONGODB_DATA_PATH}:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ${PROD_BANK_MONGODB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${PROD_BANK_MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${PROD_BANK_MONGODB_PASSWORD}
+    restart: unless-stopped

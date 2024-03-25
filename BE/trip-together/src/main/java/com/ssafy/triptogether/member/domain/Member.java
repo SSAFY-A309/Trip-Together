@@ -86,7 +86,8 @@ public class Member extends BaseEntity {
     private List<MemberSettlement> memberSettlements = new ArrayList<>();
 
     @Builder
-    public Member(String uuid, String nickname, Gender gender, LocalDate birth) {
+    public Member(String username, String uuid, String nickname, Gender gender, LocalDate birth) {
+        this.username = username;
         this.uuid = uuid;
         this.nickname = nickname;
         this.gender = gender;

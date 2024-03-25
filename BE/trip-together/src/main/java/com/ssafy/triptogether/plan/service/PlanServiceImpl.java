@@ -14,6 +14,7 @@ import com.ssafy.triptogether.plan.data.request.AttractionDetail;
 import com.ssafy.triptogether.plan.data.request.PlanDetail;
 import com.ssafy.triptogether.plan.data.request.PlansSaveRequest;
 import com.ssafy.triptogether.plan.data.response.DailyPlanAttractionResponse;
+import com.ssafy.triptogether.plan.data.response.DailyPlanListResponse;
 import com.ssafy.triptogether.plan.data.response.DailyPlanResponse;
 import com.ssafy.triptogether.plan.data.response.PlanDetailFindResponse;
 import com.ssafy.triptogether.plan.domain.Plan;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static com.ssafy.triptogether.global.exception.response.ErrorCode.DAILY_PLAN_NOT_FOUND;
 import static com.ssafy.triptogether.global.exception.response.ErrorCode.PLAN_NOT_FOUND;
 
 @Service
@@ -46,6 +48,11 @@ public class PlanServiceImpl implements PlanSaveService, PlanLoadService {
         if (!memberId.equals(plan.getMember().getId())) {
             throw new ForbiddenException(detailMessageKey, ErrorCode.FORBIDDEN_ACCESS_MEMBER);
         }
+    }
+
+    @Override
+    public List<DailyPlanListResponse> findPlans(long memberId) {
+        return planRepository.findPlansByMemberId(memberId);
     }
 
     /**
@@ -81,8 +88,14 @@ public class PlanServiceImpl implements PlanSaveService, PlanLoadService {
     @Transactional
     @Override
     public void planDelete(Long memberId, Long planId) {
+        // find plan
         Plan plan = planFindById(planId, "PlanDelete");
+
+        // validate auth
         planForbiddenCheck(memberId, plan, "PlanDelete");
+
+        // delete daily plans & plan
+        dailyPlansRepository.deleteByPlanId(plan.getId());
         planRepository.delete(plan);
     }
 
@@ -151,7 +164,8 @@ public class PlanServiceImpl implements PlanSaveService, PlanLoadService {
     @Override
     public PlanDetailFindResponse findPlanDetail(long planId) {
         // find daily plans & plan detail
-        List<DailyPlanAttractionResponse> dailyPlanAttraction = planRepository.findAllDailyPlanByPlanId(planId);
+        DailyPlans dailyPlans = dailyPlansRepository.findByPlanId(planId)
+                .orElseThrow(() -> new NotFoundException("PlanDetailFind", DAILY_PLAN_NOT_FOUND));
         DailyPlanResponse planDetail = planRepository.findDetailPlanById(planId)
                 .orElseThrow(() -> new NotFoundException("PlanDetailFind", PLAN_NOT_FOUND));
 
@@ -162,7 +176,7 @@ public class PlanServiceImpl implements PlanSaveService, PlanLoadService {
                 .endAt(planDetail.endAt())
                 .title(planDetail.title())
                 .totalEstimatedBudget(planDetail.totalEstimatedBudget())
-                .dailyPlans(dailyPlanAttraction)
+                .dailyPlans(dailyPlans.getDailyPlans())
                 .build();
     }
 }

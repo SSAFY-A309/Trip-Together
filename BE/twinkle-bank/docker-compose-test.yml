@@ -20,3 +20,16 @@ services:
     ports:
       - ${TEST_BANK_REDIS_BINDING_PORT}:6379
     restart: unless-stopped
+
+  test_bank_dev_mongodb_container:
+    container_name: test_bank_mongodb_container
+    image: mongo
+    ports:
+      - ${TEST_BANK_MONGODB_BINDING_PORT}:27017
+    volumes:
+      - ${TEST_BANK_MONGODB_DATA_PATH}:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ${TEST_BANK_MONGODB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${TEST_BANK_MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${TEST_BANK_MONGODB_PASSWORD}
+    restart: unless-stopped

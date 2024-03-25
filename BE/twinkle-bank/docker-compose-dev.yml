@@ -44,3 +44,16 @@ services:
     ports:
       - ${SONARQUBE_BINDING_PORT}:9000
     restart: on-failure
+
+  dev_bank_dev_mongodb_container:
+    container_name: dev_bank_mongodb_container
+    image: mongo
+    ports:
+      - ${DEV_BANK_MONGODB_BINDING_PORT}:27017
+    volumes:
+      - ${DEV_BANK_MONGODB_DATA_PATH}:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ${DEV_BANK_MONGODB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${DEV_BANK_MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DEV_BANK_MONGODB_PASSWORD}
+    restart: unless-stopped

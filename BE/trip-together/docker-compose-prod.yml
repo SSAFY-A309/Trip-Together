@@ -39,3 +39,16 @@ services:
       EXCHANGE_RATE_API_KEY: ${EXCHANGE_RATE_API_KEY}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     restart: always
+
+  prod_trip_dev_mongodb_container:
+    container_name: prod_trip_mongodb_container
+    image: mongo
+    ports:
+      - ${PROD_TRIP_MONGODB_BINDING_PORT}:27017
+    volumes:
+      - ${PROD_TRIP_MONGODB_DATA_PATH}:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ${PROD_TRIP_MONGODB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${PROD_TRIP_MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${PROD_TRIP_MONGODB_PASSWORD}
+    restart: unless-stopped
