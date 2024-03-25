@@ -17,6 +17,7 @@ public enum StatusCode {
     SUCCESS_RATE_LOAD(200, "요청 통화 환율 조회 성공"),
     SUCCESS_TRIP_ACCOUNTS_LOAD(200, "지갑 내 목록 조회 성공"),
     SUCCESS_ACCOUNT_HISTORIES_LOAD(200, "거래 내역 조회 성공"),
+    SUCCESS_TRIP_ACCOUNT_EXCHANGE(200, "환전 성공"),
     //SYNC_ACCOUNT
     SUCCESS_SYNC_ACCOUNTS_LOAD(200, "연동 계좌 목록 조회 성공"),
     SUCCESS_MAIN_SYNC_ACCOUNT_UPDATE(200, "주계좌 변경 성공"),

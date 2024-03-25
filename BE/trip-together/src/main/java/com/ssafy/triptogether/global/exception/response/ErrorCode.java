@@ -14,12 +14,14 @@ public enum ErrorCode {
     PIN_NOT_EXISTS(404, "지갑 정보를 찾을 수 없습니다."),
 	FORBIDDEN_ACCESS_MEMBER(403, "접근 권한이 없는 사용자입니다."),
 	// SYNC_ACCOUNT
-	SYNC_ACCOUNT_NOT_FOUND(400, "요청 연동 계좌가 존재하지 않습니다"),
+	SYNC_ACCOUNT_NOT_FOUND(404, "요청 연동 계좌가 존재하지 않습니다"),
 	// EXTERNAL_SERVER
 	TWINKLE_BANK_SERVER_ERROR(500, "반짝 은행 API 요청에 실패했습니다"),
 	CURRENCY_RATE_LOAD_SERVER_ERROR(500, "환율 조회 API 요청에 실패했습니다"),
 	// TRIP_ACCOUNT
 	CURRENCY_NOT_FOUND(404, "통화를 찾을 수 없습니다."),
+	TRIP_ACCOUNT_NOT_FOUND(404, "해당 여행 계좌를 찾을 수 없습니다."),
+	TRIP_ACCOUNT_BALANCE_BAD_REQUEST(400, "잔액보다 큰 출금은 불가능합니다."),
 	// ATTRACTION
 	REGION_NOT_FOUND(404, "지역을 찾을 수 없습니다"),
 	ATTRACTION_NOT_FOUND(404, "여행지를 찾을 수 없습니다"),

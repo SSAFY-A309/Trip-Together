@@ -3,6 +3,7 @@ package com.ssafy.triptogether.infra.twinklebank;
 import com.ssafy.triptogether.global.data.response.ApiResponse;
 import com.ssafy.triptogether.global.exception.exceptions.category.ExternalServerException;
 import com.ssafy.triptogether.global.exception.response.ErrorCode;
+import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleBankAccountExchangeRequest;
 import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleAccountSyncRequest;
 import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleBankAccountsLoadRequest;
 import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleBankLogoutRequest;
@@ -82,7 +83,7 @@ public class TwinkleBankClientImpl implements TwinkleBankClient {
 			return (TwinkleAccountSyncResponse)response.getBody().getData();
 		}
 
-		throw new ExternalServerException("TwinkleBankAccountsLoad", ErrorCode.TWINKLE_BANK_SERVER_ERROR);
+		throw new ExternalServerException("TwinkleBankAccountsSync", ErrorCode.TWINKLE_BANK_SERVER_ERROR);
 	}
 
 	/**
@@ -110,7 +111,7 @@ public class TwinkleBankClientImpl implements TwinkleBankClient {
 		);
 
 		if (response.getStatusCode() != HttpStatus.OK) {
-			throw new ExternalServerException("TwinkleBankAccountsLoad", ErrorCode.TWINKLE_BANK_SERVER_ERROR);
+			throw new ExternalServerException("TwinkleBankAccountsSyncDelete", ErrorCode.TWINKLE_BANK_SERVER_ERROR);
 		}
 	}
 
@@ -136,6 +137,64 @@ public class TwinkleBankClientImpl implements TwinkleBankClient {
 
 		if (response.getStatusCode() != HttpStatus.OK) {
 			throw new ExternalServerException("TwinkleBankAccountsLoad", ErrorCode.TWINKLE_BANK_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * 출금 요청
+	 * @param twinkleBankAccountExchangeRequest 출금 요청 정보
+	 */
+	@Override
+	public void bankAccountWithdraw(TwinkleBankAccountExchangeRequest twinkleBankAccountExchangeRequest) {
+		// Todo: twinkleBankAccountsLoadRequest 에서 uuid 를 뽑아서 Redis 에서 access_token 조회
+
+		String url = UriComponentsBuilder.fromHttpUrl(TWINKLE_BANK_URI + "/account/v1/accounts/withdraw")
+			.queryParam("여행 클라이언트 키")
+			.toUriString();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + "access_token");
+		HttpEntity<TwinkleBankAccountExchangeRequest> entity = new HttpEntity<>(twinkleBankAccountExchangeRequest, headers);
+
+		ResponseEntity<ApiResponse> response = restTemplate.exchange(
+			url,
+			HttpMethod.POST,
+			entity,
+			ApiResponse.class
+		);
+
+		if (response.getStatusCode() != HttpStatus.OK) {
+			throw new ExternalServerException("TwinkleBankAccountWithdraw", ErrorCode.TWINKLE_BANK_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * 입금 요청
+	 * @param twinkleBankAccountExchangeRequest 입금 요청 정보
+	 */
+	@Override
+	public void bankAccountDeposit(TwinkleBankAccountExchangeRequest twinkleBankAccountExchangeRequest) {
+		// Todo: twinkleBankAccountsLoadRequest 에서 uuid 를 뽑아서 Redis 에서 access_token 조회
+
+		String url = UriComponentsBuilder.fromHttpUrl(TWINKLE_BANK_URI + "/account/v1/accounts/deposit")
+			.queryParam("여행 클라이언트 키")
+			.toUriString();
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", "Bearer " + "access_token");
+		HttpEntity<TwinkleBankAccountExchangeRequest> entity = new HttpEntity<>(twinkleBankAccountExchangeRequest, headers);
+
+		ResponseEntity<ApiResponse> response = restTemplate.exchange(
+			url,
+			HttpMethod.POST,
+			entity,
+			ApiResponse.class
+		);
+
+		if (response.getStatusCode() != HttpStatus.OK) {
+			throw new ExternalServerException("TwinkleBankAccountDeposit", ErrorCode.TWINKLE_BANK_SERVER_ERROR);
 		}
 	}
 }

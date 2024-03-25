@@ -2,6 +2,8 @@ package com.ssafy.triptogether.tripaccount.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.triptogether.global.domain.BaseEntity;
+import com.ssafy.triptogether.global.exception.exceptions.category.BadRequestException;
+import com.ssafy.triptogether.global.exception.response.ErrorCode;
 import com.ssafy.triptogether.member.domain.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -52,5 +54,16 @@ public class TripAccount extends BaseEntity {
     public void setMember(Member member) {
         this.member = member;
         member.getTripAccounts().add(this);
+    }
+
+    public void depositBalance(Double newBalance) {
+        this.balance += newBalance;
+    }
+
+    public void withdrawBalance(Double newBalance) {
+        if (this.balance < newBalance) {
+            throw new BadRequestException("TripAccountExchange", ErrorCode. TRIP_ACCOUNT_BALANCE_BAD_REQUEST);
+        }
+        this.balance -= newBalance;
     }
 }

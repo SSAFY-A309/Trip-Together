@@ -1,5 +1,6 @@
 package com.ssafy.triptogether.infra.twinklebank;
 
+import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleBankAccountExchangeRequest;
 import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleAccountSyncRequest;
 import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleBankAccountsLoadRequest;
 import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleBankLogoutRequest;
@@ -12,4 +13,6 @@ public interface TwinkleBankClient {
 	void bankAccountSyncDelete(TwinkleAccountSyncRequest twinkleAccountSyncRequest);
 
 	void bankLogout(TwinkleBankLogoutRequest twinkleBankLogoutRequest);
+	void bankAccountWithdraw(TwinkleBankAccountExchangeRequest twinkleBankAccountExchangeRequest);
+	void bankAccountDeposit(TwinkleBankAccountExchangeRequest twinkleBankAccountExchangeRequest);
 }

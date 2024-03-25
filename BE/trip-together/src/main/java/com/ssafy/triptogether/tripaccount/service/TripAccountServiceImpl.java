@@ -11,10 +11,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.triptogether.auth.data.request.PinVerifyRequest;
+import com.ssafy.triptogether.auth.validator.pin.PinVerify;
 import com.ssafy.triptogether.global.exception.exceptions.category.NotFoundException;
 import com.ssafy.triptogether.global.exception.response.ErrorCode;
 import com.ssafy.triptogether.infra.currencyrate.CurrencyRateClient;
 import com.ssafy.triptogether.infra.currencyrate.data.response.CurrencyRateResponse;
+import com.ssafy.triptogether.infra.twinklebank.TwinkleBankClient;
+import com.ssafy.triptogether.infra.twinklebank.data.request.TwinkleBankAccountExchangeRequest;
+import com.ssafy.triptogether.member.domain.Member;
+import com.ssafy.triptogether.member.repository.MemberRepository;
+import com.ssafy.triptogether.member.utils.MemberUtils;
+import com.ssafy.triptogether.tripaccount.data.request.TripAccountExchangeRequest;
 import com.ssafy.triptogether.tripaccount.data.response.AccountHistoriesLoadDetail;
 import com.ssafy.triptogether.tripaccount.data.response.CurrenciesLoadDetail;
 import com.ssafy.triptogether.tripaccount.data.response.CurrenciesLoadResponse;
@@ -39,8 +47,10 @@ public class TripAccountServiceImpl implements TripAccountLoadService, TripAccou
 	private final CurrencyRepository currencyRepository;
 	private final TripAccountRepository tripAccountRepository;
 	private final AccountHistoryRepository accountHistoryRepository;
+	private final MemberRepository memberRepository;
 	// Client
 	private final CurrencyRateClient currencyRateClient;
+	private final TwinkleBankClient twinkleBankClient;
 
 	/**
 	 * 환전 가능 통화 목록을 조회하는 메서드
@@ -144,5 +154,71 @@ public class TripAccountServiceImpl implements TripAccountLoadService, TripAccou
 				currency.updateRate(Double.valueOf(currencyRateResponse.dealBasR()));
 			}
 		});
+	}
+
+	/**
+	 * 환전 요청
+	 * @param memberId 요청자의 member_id
+	 * @param pinVerifyRequest PIN 인증 요청
+	 * @param tripAccountExchangeRequest 환전 정보
+	 */
+	@PinVerify
+	@Transactional
+	@Override
+	public void tripAccountExchange(long memberId, PinVerifyRequest pinVerifyRequest,
+		TripAccountExchangeRequest tripAccountExchangeRequest) {
+		Member member = MemberUtils.findByMemberId(memberRepository, memberId);
+
+		if (tripAccountExchangeRequest.fromCurrencyCode().equals("KRW")) {
+			CurrencyCode currencyCode = CurrencyCode.fromString(tripAccountExchangeRequest.toCurrencyCode());
+			currencyRepository.findByCode(currencyCode)
+				.ifPresent(currency -> {
+					tripAccountRepository.findByMemberIdAndCurrencyId(memberId, currency.getId())
+						.ifPresent(tripAccount -> {
+							tripAccount.depositBalance(tripAccountExchangeRequest.toQuantity());
+						});
+					TripAccount tripAccount = TripAccount.builder()
+						.balance(tripAccountExchangeRequest.toQuantity())
+						.currency(currency)
+						.member(member)
+						.build();
+					tripAccountRepository.save(tripAccount);
+					twinkleBankWithdrawRequest(tripAccountExchangeRequest);
+				});
+			return;
+		}
+
+		CurrencyCode currencyCode = CurrencyCode.fromString(tripAccountExchangeRequest.fromCurrencyCode());
+		currencyRepository.findByCode(currencyCode)
+			.ifPresent(currency -> {
+				TripAccount tripAccount = tripAccountRepository.findByMemberIdAndCurrencyId(memberId, currency.getId())
+					.orElseThrow(
+						() -> new NotFoundException("TripAccountExchange", ErrorCode.TRIP_ACCOUNT_NOT_FOUND)
+					);
+				tripAccount.withdrawBalance(tripAccountExchangeRequest.fromQuantity());
+				twinkleBankDepositRequest(tripAccountExchangeRequest);
+			});
+	}
+
+	private void twinkleBankDepositRequest(TripAccountExchangeRequest tripAccountExchangeRequest) {
+		TwinkleBankAccountExchangeRequest twinkleBankAccountExchangeRequest = TwinkleBankAccountExchangeRequest.builder()
+			.accountUuid(tripAccountExchangeRequest.accountUuid())
+			.price(tripAccountExchangeRequest.toQuantity())
+			.type("deposit")
+			.address("멀티 캠퍼스")
+			.businessName("trip-together")
+			.build();
+		twinkleBankClient.bankAccountDeposit(twinkleBankAccountExchangeRequest);
+	}
+
+	private void twinkleBankWithdrawRequest(TripAccountExchangeRequest tripAccountExchangeRequest) {
+		TwinkleBankAccountExchangeRequest twinkleBankAccountExchangeRequest = TwinkleBankAccountExchangeRequest.builder()
+			.accountUuid(tripAccountExchangeRequest.accountUuid())
+			.price(tripAccountExchangeRequest.fromQuantity())
+			.type("withdraw")
+			.address("멀티 캠퍼스")
+			.businessName("trip-together")
+			.build();
+		twinkleBankClient.bankAccountWithdraw(twinkleBankAccountExchangeRequest);
 	}
 }
