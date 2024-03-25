@@ -170,34 +170,36 @@ public class TripAccountServiceImpl implements TripAccountLoadService, TripAccou
 		Member member = MemberUtils.findByMemberId(memberRepository, memberId);
 
 		if (tripAccountExchangeRequest.fromCurrencyCode().equals("KRW")) {
-			CurrencyCode currencyCode = CurrencyCode.fromString(tripAccountExchangeRequest.toCurrencyCode());
-			currencyRepository.findByCode(currencyCode)
-				.ifPresent(currency -> {
-					tripAccountRepository.findByMemberIdAndCurrencyId(memberId, currency.getId())
-						.ifPresent(tripAccount -> {
-							tripAccount.depositBalance(tripAccountExchangeRequest.toQuantity());
-						});
-					TripAccount tripAccount = TripAccount.builder()
-						.balance(tripAccountExchangeRequest.toQuantity())
-						.currency(currency)
-						.member(member)
-						.build();
-					tripAccountRepository.save(tripAccount);
-					twinkleBankWithdrawRequest(tripAccountExchangeRequest);
+			Currency currency = getCurrency(tripAccountExchangeRequest.toCurrencyCode());
+			tripAccountRepository.findByMemberIdAndCurrencyId(memberId, currency.getId())
+				.ifPresent(tripAccount -> {
+					tripAccount.depositBalance(tripAccountExchangeRequest.toQuantity());
 				});
+			TripAccount tripAccount = TripAccount.builder()
+				.balance(tripAccountExchangeRequest.toQuantity())
+				.currency(currency)
+				.member(member)
+				.build();
+			tripAccountRepository.save(tripAccount);
+			twinkleBankWithdrawRequest(tripAccountExchangeRequest);
 			return;
 		}
 
-		CurrencyCode currencyCode = CurrencyCode.fromString(tripAccountExchangeRequest.fromCurrencyCode());
-		currencyRepository.findByCode(currencyCode)
-			.ifPresent(currency -> {
-				TripAccount tripAccount = tripAccountRepository.findByMemberIdAndCurrencyId(memberId, currency.getId())
-					.orElseThrow(
-						() -> new NotFoundException("TripAccountExchange", ErrorCode.TRIP_ACCOUNT_NOT_FOUND)
-					);
-				tripAccount.withdrawBalance(tripAccountExchangeRequest.fromQuantity());
-				twinkleBankDepositRequest(tripAccountExchangeRequest);
-			});
+		Currency currency = getCurrency(tripAccountExchangeRequest.fromCurrencyCode());
+		TripAccount tripAccount = tripAccountRepository.findByMemberIdAndCurrencyId(memberId, currency.getId())
+			.orElseThrow(
+				() -> new NotFoundException("TripAccountExchange", ErrorCode.TRIP_ACCOUNT_NOT_FOUND)
+			);
+		tripAccount.withdrawBalance(tripAccountExchangeRequest.fromQuantity());
+		twinkleBankDepositRequest(tripAccountExchangeRequest);
+	}
+
+	private Currency getCurrency(String tripAccountExchangeRequest) {
+		CurrencyCode currencyCode = CurrencyCode.fromString(tripAccountExchangeRequest);
+		return currencyRepository.findByCode(currencyCode)
+			.orElseThrow(
+				() -> new NotFoundException("TripAccountExchange", ErrorCode.CURRENCY_NOT_FOUND)
+			);
 	}
 
 	private void twinkleBankDepositRequest(TripAccountExchangeRequest tripAccountExchangeRequest) {
