@@ -19,6 +19,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import static com.ssafy.triptogether.global.exception.response.ErrorCode.*;
 @Slf4j
 public class TwinkleBankAuthImpl implements TwinkleBankAuth {
 	private final RestTemplate restTemplate;
+	private final WebClient webClient;
 	private final StringRedisTemplate redisTemplate;
 	private final ObjectMapper objectMapper;
 
@@ -92,28 +94,43 @@ public class TwinkleBankAuthImpl implements TwinkleBankAuth {
 
 	@Override
 	public void transfer1won(TwinkleBankTransfer1wonRequest twinkleBankTransfer1wonRequest, String memberUuid) {
-		String url = UriComponentsBuilder.fromHttpUrl(TWINKLE_BANK_URI + "/account/v1/accounts/1wontransfer")
-			.toUriString();
+		// String url = UriComponentsBuilder.fromHttpUrl(TWINKLE_BANK_URI + "/account/v1/accounts/1wontransfer")
+		// 	.toUriString();
 		String accessToken = redisTemplate.opsForValue().get("access:" + memberUuid);
 
 		// TODO : bank access token이 만료되었거나, 발급받지 않았을 경우 예외 상황 처리
 		accessToken = reissueIfExpired(memberUuid, accessToken);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", accessToken);
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<TwinkleBankTransfer1wonRequest> entity = new HttpEntity<>(twinkleBankTransfer1wonRequest, headers);
-		log.debug("transfer1won bank accesstoken " + headers.get("Authorization"));
-		try {
-			ResponseEntity<ApiResponse> response = restTemplate.exchange(
-				url,
-				HttpMethod.POST,
-				entity,
-				ApiResponse.class
-			);
+		// HttpHeaders headers = new HttpHeaders();
+		// headers.set("Authorization", accessToken);
+		// headers.setContentType(MediaType.APPLICATION_JSON);
+		// HttpEntity<TwinkleBankTransfer1wonRequest> entity = new HttpEntity<>(twinkleBankTransfer1wonRequest, headers);
+		// log.debug("transfer1won bank accesstoken " + headers.get("Authorization"));
+
+		try{
+			ApiResponse response = webClient
+				.post()
+				.uri("/account/v1/accounts/1wontransfer")
+				.header("Authorization", accessToken)
+				.bodyValue(twinkleBankTransfer1wonRequest)
+				.retrieve()
+				.bodyToMono(ApiResponse.class)
+				.block();
+
 		} catch (RestClientException e) {
 			throw new ExternalServerException("transfer1won", TWINKLE_BANK_SERVER_ERROR);
 		}
+
+		// try {
+		// 	ResponseEntity<ApiResponse> response = restTemplate.exchange(
+		// 		url,
+		// 		HttpMethod.POST,
+		// 		entity,
+		// 		ApiResponse.class
+		// 	);
+		// } catch (RestClientException e) {
+		// 	throw new ExternalServerException("transfer1won", TWINKLE_BANK_SERVER_ERROR);
+		// }
 	}
 
 	@Override
